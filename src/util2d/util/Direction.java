@@ -15,9 +15,9 @@ public class Direction {
     public static final float DIRECTION_SOUTH_WEST = 135;
     public static final float DIRECTION_SOUTH_EAST = 45;
 
-    //angle in degrees
+    //receives angle in degrees adn returns the opposite also in degress
     public static float getOpposite(float angle) {
-        return (float)((angle + 180) * (Math.PI / 180));
+        return (float)((angle + 180) /** (Math.PI / 180)*/);
     }
 
 }

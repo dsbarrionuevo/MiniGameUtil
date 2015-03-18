@@ -21,6 +21,7 @@ public abstract class Movable extends Drawable {
         this.direction = direction;
         this.angle = 0f;
         this.magnitude = 0f;
+        this.updateMovementParameters();
     }
 
     public Movable(float speed) {
@@ -57,10 +58,12 @@ public abstract class Movable extends Drawable {
         this.updateMovementParameters();
     }
 
+    //receives the angle in degrees
     public void setDirection(float angle) {
         this.angle = (float) (angle * Math.PI / 180);
         this.direction.x = (float) Math.cos(angle);
         this.direction.y = (float) Math.sin(angle);
+        System.out.println("this.direction.y: "+this.direction.y);
         this.magnitude = (float) Math.sqrt(direction.x * direction.x + direction.y * direction.y);
     }
 

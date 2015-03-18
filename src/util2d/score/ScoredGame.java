@@ -1,6 +1,8 @@
 package util2d.score;
 
 import util2d.minigame.MiniGame;
+import util2d.player.GraphicPlayer;
+import util2d.player.Player;
 
 /**
  *
@@ -9,6 +11,7 @@ import util2d.minigame.MiniGame;
 public class ScoredGame extends ScoreSystem {
 
     private float targetScore;
+    private Player winner;
 
     public ScoredGame(MiniGame miniGame, float targetScore) {
         super(miniGame);
@@ -19,6 +22,7 @@ public class ScoredGame extends ScoreSystem {
     public boolean isFinished() {
         for (Float score : scores.values()) {
             if (score >= targetScore) {
+                //set the winner
                 return true;
             }
         }

@@ -43,7 +43,7 @@ public class Test {
             this.options = options;
             this.networkController = networkController;
             this.instructions = new Instructions("MiniGame 1 Instructions", "You have to...");
-            this.scoreSystem = new TimedGame(this, 2000);
+            this.scoreSystem = new TimedGame(this, 10000);
         }
 
     }

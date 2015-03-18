@@ -88,7 +88,7 @@ public class MiniGame extends BasicGame {
                 }
                 //finish the game?
                 if (this.scoreSystem.isFinished()) {
-                    this.gameState = GameState.SCORE_SCREEN;
+                    finish();
                 }
                 //time update
                 this.currentTime += delta;
@@ -110,6 +110,7 @@ public class MiniGame extends BasicGame {
                 //show instructions
                 break;
             case RUNNING:
+                scoreSystem.renderScorePlotter(container, g);
                 g.drawString("RUNNING", 0, 0);
                 break;
             case SCORE_SCREEN:
