@@ -3,19 +3,14 @@ package util2d.minigame;
 import common.ActionCommunication;
 import controller.ApplicationController;
 import util2d.score.ScoreSystem;
-import util2d.network.NetworkController;
 import java.util.ArrayList;
 import javax.swing.JDialog;
-
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
-import util2d.player.GraphicPlayer;
 import common.Player;
 import javax.swing.JFrame;
 
@@ -46,12 +41,12 @@ public abstract class MiniGame extends BasicGameState {
     protected ActionCommunication actionCommunication;
     protected JFrame gameWindow;
 
-    public MiniGame(String name, ApplicationController controller, JDialog intructions, ScoreSystem scoreSystem) throws SlickException {
+    public MiniGame(ApplicationController controller) throws SlickException {
         super();
-        this.name = name;
         this.controller = controller;
-        this.instructions = intructions;
-        this.scoreSystem = scoreSystem;
+        this.name = getName();
+        this.instructions = getInstructions();
+        this.scoreSystem = getScoreSystem();
         this.currentTime = 0;
         this.gameState = GameState.NOT_EVEN_STARTED;
         this.players = controller.getPlayers();
@@ -61,6 +56,10 @@ public abstract class MiniGame extends BasicGameState {
 
     public void finish() {
         this.gameState = GameState.SCORE_SCREEN;
+    }
+
+    public void start() {
+        this.gameState = GameState.RUNNING;
     }
 
     public boolean isPaused() {
@@ -91,7 +90,7 @@ public abstract class MiniGame extends BasicGameState {
                 //finish the game?
                 if (this.scoreSystem.isFinished()) {
                     finish();
-                }else{
+                } else {
                     updateRunning(container, game, delta);
                 }
                 //time update
@@ -102,10 +101,14 @@ public abstract class MiniGame extends BasicGameState {
                 break;
         }
     }
-    
-    public abstract void updateInstructions(GameContainer container, StateBasedGame game, int delta) throws SlickException;
+
+    public void updateInstructions(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+    }
+
     public abstract void updateRunning(GameContainer container, StateBasedGame game, int delta) throws SlickException;
-    public abstract void updateScore(GameContainer container, StateBasedGame game, int delta) throws SlickException;
+
+    public void updateScore(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+    }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
@@ -123,11 +126,15 @@ public abstract class MiniGame extends BasicGameState {
                 break;
         }
     }
-    
-    public abstract void renderInstructions(GameContainer container, StateBasedGame game, Graphics g) throws SlickException;
+
+    public void renderInstructions(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+    }
+
     public abstract void renderRunning(GameContainer container, StateBasedGame game, Graphics g) throws SlickException;
-    public abstract void renderScore(GameContainer container, StateBasedGame game, Graphics g) throws SlickException;
-    
+
+    public void renderScore(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+    }
+
     @Override
     public void keyPressed(int key, char c) {
         //pause action only available when the game is running...
@@ -139,10 +146,8 @@ public abstract class MiniGame extends BasicGameState {
             }
         }
     }
-    
-    public String getName() {
-        return name;
-    }
+
+    public abstract String getName();
 
     @Override
     public int getID() {
@@ -165,17 +170,13 @@ public abstract class MiniGame extends BasicGameState {
         return players;
     }
 
-    public JDialog getInstructions() {
-        return instructions;
-    }
+    public abstract JDialog getInstructions();
 
     public GameContainer getGameContainer() {
         return gameContainer;
     }
 
-    public ScoreSystem getScoreSystem() {
-        return scoreSystem;
-    }
+    public abstract ScoreSystem getScoreSystem();
 
     public long getCurrentTime() {
         return currentTime;
