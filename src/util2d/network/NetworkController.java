@@ -1,6 +1,6 @@
 package util2d.network;
 
-import util2d.player.Player;
+import common.Player;
 
 /**
  *

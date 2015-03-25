@@ -1,22 +1,29 @@
 package util2d.minigame;
 
+import common.ActionCommunication;
+import controller.ApplicationController;
 import util2d.score.ScoreSystem;
 import util2d.network.NetworkController;
 import java.util.ArrayList;
+import javax.swing.JDialog;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 import util2d.player.GraphicPlayer;
-import util2d.player.Player;
+import common.Player;
+import javax.swing.JFrame;
 
 /**
  *
  * @author Diego
  */
-public class MiniGame extends BasicGame {
+public abstract class MiniGame extends BasicGameState {
 
     public static enum GameState {
 
@@ -27,38 +34,29 @@ public class MiniGame extends BasicGame {
         SCORE_SCREEN
     }
 
+    protected int id;
     protected String name;
-    protected ArrayList<GraphicPlayer> players; //this should be players with a graphics representation?
-    protected Instructions instructions;
+    protected GameState gameState;
+    protected ApplicationController controller;
+    protected ArrayList<Player> players;
+    protected JDialog instructions;
+    protected GameContainer gameContainer;
     protected ScoreSystem scoreSystem; //this one decides when the game is over (score reached, time limit, etc.)
     protected long currentTime;
-    protected Options options;//screen size, full screnn, fps...
-    protected GameState gameState;
-    protected NetworkController networkController;
+    protected ActionCommunication actionCommunication;
+    protected JFrame gameWindow;
 
-    protected AppGameContainer gameContainer;
-
-    public MiniGame(String name, ArrayList<Player> players, Options options, Instructions intructions, ScoreSystem scoreSystem) throws SlickException {
-        super(name);
+    public MiniGame(String name, ApplicationController controller, JDialog intructions, ScoreSystem scoreSystem) throws SlickException {
+        super();
         this.name = name;
-        this.setGraphicPlayers(players);
+        this.controller = controller;
         this.instructions = intructions;
         this.scoreSystem = scoreSystem;
         this.currentTime = 0;
         this.gameState = GameState.NOT_EVEN_STARTED;
-        this.gameContainer = null;
-    }
-
-    //only for testing propuses...
-    public MiniGame(String name) throws SlickException {
-        this(name, new ArrayList<>(), null, null, null);
-    }
-
-    public void start() throws SlickException {
-        this.gameContainer = new AppGameContainer(this, options.getScreenWidth(), options.getScreenHeight(), options.isFullScreen());
-        this.gameContainer.setTargetFrameRate(options.getFps());
-        this.gameState = GameState.INSTRUCTIONS_SCREEN;
-        this.gameContainer.start();
+        this.players = controller.getPlayers();
+        this.actionCommunication = controller.getCommunication();
+        this.gameWindow = controller.getGameWindow();
     }
 
     public void finish() {
@@ -67,20 +65,24 @@ public class MiniGame extends BasicGame {
 
     public boolean isPaused() {
         return gameContainer.isPaused();
-        //return gameState == GameState.PAUSED;
     }
 
     @Override
-    public void init(GameContainer container) throws SlickException {
-        //it should be the enter mehtod when implementing BasicGameState
+    public void enter(GameContainer container, StateBasedGame game) throws SlickException {
+        this.gameContainer = container;
+        this.gameState = GameState.INSTRUCTIONS_SCREEN;
     }
 
     @Override
-    public void update(GameContainer container, int delta) throws SlickException {
+    public abstract void init(GameContainer container, StateBasedGame game) throws SlickException;
+
+    @Override
+    public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         switch (gameState) {
             case NOT_EVEN_STARTED:
                 break;
             case INSTRUCTIONS_SCREEN:
+                updateInstructions(container, game, delta);
                 break;
             case RUNNING:
                 if (gameContainer.isPaused()) {
@@ -89,58 +91,43 @@ public class MiniGame extends BasicGame {
                 //finish the game?
                 if (this.scoreSystem.isFinished()) {
                     finish();
+                }else{
+                    updateRunning(container, game, delta);
                 }
                 //time update
                 this.currentTime += delta;
                 break;
             case SCORE_SCREEN:
+                updateScore(container, game, delta);
                 break;
         }
     }
+    
+    public abstract void updateInstructions(GameContainer container, StateBasedGame game, int delta) throws SlickException;
+    public abstract void updateRunning(GameContainer container, StateBasedGame game, int delta) throws SlickException;
+    public abstract void updateScore(GameContainer container, StateBasedGame game, int delta) throws SlickException;
 
     @Override
-    public void render(GameContainer container, Graphics g) throws SlickException {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         switch (gameState) {
             case NOT_EVEN_STARTED:
-                g.drawString("NOT_EVEN_STARTED", 0, 0);
                 break;
             case INSTRUCTIONS_SCREEN:
-                g.drawString("INSTRUCTIONS_SCREEN", 0, 0);
-                this.instructions.render(container, g);
-                //show instructions
+                renderInstructions(container, game, g);
                 break;
             case RUNNING:
-                scoreSystem.renderScorePlotter(container, g);
-                g.drawString("RUNNING", 0, 0);
+                renderRunning(container, game, g);
                 break;
             case SCORE_SCREEN:
-                g.drawString("SCORE_SCREEN", 0, 0);
-                //show scores and winner of teh minigame
+                renderScore(container, game, g);
                 break;
         }
     }
-
-    protected void setGraphicPlayers(ArrayList<Player> players) {
-        this.players = new ArrayList<>();
-        for (Player player : players) {
-            this.players.add(new GraphicPlayer(player));
-        }
-    }
-
-    //INPUTS...
-    @Override
-    public void mouseClicked(int button, int x, int y, int clickCount) {
-        super.mouseClicked(button, x, y, clickCount);
-        switch (gameState) {
-            case INSTRUCTIONS_SCREEN:
-                if (button == Input.MOUSE_LEFT_BUTTON) {
-                    //networkController.sendPlayerReady();
-                    gameState = GameState.RUNNING;
-                }
-                break;
-        }
-    }
-
+    
+    public abstract void renderInstructions(GameContainer container, StateBasedGame game, Graphics g) throws SlickException;
+    public abstract void renderRunning(GameContainer container, StateBasedGame game, Graphics g) throws SlickException;
+    public abstract void renderScore(GameContainer container, StateBasedGame game, Graphics g) throws SlickException;
+    
     @Override
     public void keyPressed(int key, char c) {
         //pause action only available when the game is running...
@@ -152,22 +139,38 @@ public class MiniGame extends BasicGame {
             }
         }
     }
-
-    //Sets y gets
-    public void setNetworkController(NetworkController networkController) {
-        this.networkController = networkController;
-    }
-
+    
     public String getName() {
         return name;
     }
 
-    public ArrayList<GraphicPlayer> getPlayers() {
+    @Override
+    public int getID() {
+        return id;
+    }
+
+    public void setID(int id) {
+        this.id = id;
+    }
+
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public ApplicationController getController() {
+        return controller;
+    }
+
+    public ArrayList<Player> getPlayers() {
         return players;
     }
 
-    public Instructions getInstructions() {
+    public JDialog getInstructions() {
         return instructions;
+    }
+
+    public GameContainer getGameContainer() {
+        return gameContainer;
     }
 
     public ScoreSystem getScoreSystem() {
@@ -178,16 +181,7 @@ public class MiniGame extends BasicGame {
         return currentTime;
     }
 
-    public Options getOptions() {
-        return options;
+    public ActionCommunication getActionCommunication() {
+        return actionCommunication;
     }
-
-    public GameState getGameState() {
-        return gameState;
-    }
-
-    public AppGameContainer getGameContainer() {
-        return gameContainer;
-    }
-
 }

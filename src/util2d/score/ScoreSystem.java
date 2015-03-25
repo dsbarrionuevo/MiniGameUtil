@@ -4,8 +4,9 @@ import java.util.HashMap;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Vector2f;
-import util2d.player.GraphicPlayer;
+import common.Player;
 import util2d.minigame.MiniGame;
+import javax.swing.JDialog;
 
 /**
  *
@@ -13,35 +14,36 @@ import util2d.minigame.MiniGame;
  */
 public abstract class ScoreSystem {
 
-    protected HashMap<Integer, Float> scores;
+    protected HashMap<String, Float> scores;
     protected MiniGame miniGame;//ref to the miniGame
     protected ScorePlotter plotter;
+    protected JDialog scoreChart;
 
     public ScoreSystem(MiniGame miniGame) {
         this.miniGame = miniGame;
         this.resetScores();
-        this.plotter = new ScorePlotter(4, new Vector2f(10,10));
+        this.plotter = new ScorePlotter(4, new Vector2f(10, 10));
     }
 
     public final void resetScores() {
         if (miniGame.getPlayers() != null) {
             this.scores = new HashMap<>();
-            for (GraphicPlayer graphicPlayer : miniGame.getPlayers()) {
-                this.scores.put(graphicPlayer.getPlayer().getId(), 0f);
+            for (Player player : miniGame.getPlayers()) {
+                this.scores.put(player.getId(), 0f);
             }
         }
     }
-    
-    public void renderScorePlotter(GameContainer container, Graphics g){
+
+    public void renderScorePlotter(GameContainer container, Graphics g) {
         this.plotter.render(container, g);
     }
 
-    public void incrementScore(int idPlayer, float score) {
+    public void incrementScore(String idPlayer, float score) {
         float lastScore = this.scores.get(idPlayer);
         this.scores.replace(idPlayer, lastScore + score);
     }
 
-    public void decrementScore(int idPlayer, float score) {
+    public void decrementScore(String idPlayer, float score) {
         float lastScore = this.scores.get(idPlayer);
         this.scores.replace(idPlayer, lastScore - score);
     }

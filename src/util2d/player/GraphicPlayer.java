@@ -1,15 +1,15 @@
 package util2d.player;
 
 import util2d.graphics.Movable;
-import org.newdawn.slick.geom.Vector2f;
+import common.Player;
 
 /**
  *
  * @author Diego
  */
-public class GraphicPlayer extends Movable {
+public abstract class GraphicPlayer extends Movable {
 
-    private Player player;
+    private final Player player;
 
     public GraphicPlayer(Player player) {
         super();

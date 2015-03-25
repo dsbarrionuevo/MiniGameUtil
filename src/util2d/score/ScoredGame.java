@@ -1,8 +1,7 @@
 package util2d.score;
 
 import util2d.minigame.MiniGame;
-import util2d.player.GraphicPlayer;
-import util2d.player.Player;
+import common.Player;
 
 /**
  *
