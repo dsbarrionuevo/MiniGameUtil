@@ -22,7 +22,7 @@ public abstract class ScoreSystem {
     public ScoreSystem(MiniGame miniGame) {
         this.miniGame = miniGame;
         this.resetScores();
-        this.plotter = new ScorePlotter(4, new Vector2f(10, 10));
+        this.plotter = new BarScorePlotter(4, new Vector2f(10, 10));
     }
 
     public final void resetScores() {
