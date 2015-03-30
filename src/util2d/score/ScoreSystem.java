@@ -22,7 +22,7 @@ public abstract class ScoreSystem {
     public ScoreSystem(MiniGame miniGame) {
         this.miniGame = miniGame;
         this.resetScores();
-        this.plotter = new BarScorePlotter(4, new Vector2f(10, 10));
+        this.plotter = new BarScorePlotter(scores, new Vector2f(10, 10));
     }
 
     public final void resetScores() {
@@ -30,6 +30,7 @@ public abstract class ScoreSystem {
             this.scores = new HashMap<>();
             for (Player player : miniGame.getPlayers()) {
                 this.scores.put(player.getId(), 0f);
+                this.plotter.updateScore(player.getId(), 0f);
             }
         }
     }
@@ -41,11 +42,13 @@ public abstract class ScoreSystem {
     public void incrementScore(String idPlayer, float score) {
         float lastScore = this.scores.get(idPlayer);
         this.scores.replace(idPlayer, lastScore + score);
+        this.plotter.updateScore(idPlayer, score);
     }
 
     public void decrementScore(String idPlayer, float score) {
         float lastScore = this.scores.get(idPlayer);
         this.scores.replace(idPlayer, lastScore - score);
+        this.plotter.updateScore(idPlayer, score);
     }
 
     public abstract boolean isFinished();

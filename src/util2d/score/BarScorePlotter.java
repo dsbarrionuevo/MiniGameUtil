@@ -1,5 +1,7 @@
 package util2d.score;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
@@ -18,26 +20,28 @@ public class BarScorePlotter extends ScorePlotter {
 
     private int orientation;
 
-    public BarScorePlotter(int orientation, int countPlayers, Vector2f position) {
-        super(countPlayers, position);
+    public BarScorePlotter(int orientation, HashMap<String, Float> scores, Vector2f position) {
+        super(scores, position);
         this.orientation = orientation;
     }
 
-    public BarScorePlotter(int countPlayers, Vector2f position) {
-        this(PLOTTER_HORIZONTAL, countPlayers, position);
+    public BarScorePlotter(HashMap<String, Float> scores, Vector2f position) {
+        this(PLOTTER_HORIZONTAL, scores, position);
     }
-
+    
     @Override
-    protected void createPlotter(int countPlayers) {
+    public void updateScores() {
         Figure scoreBars = new FigureShape();
         Rectangle rectangleShape;
-        for (int i = 0; i < countPlayers; i++) {
+        int i = 0;
+        for (Entry<String, Float> entry : scores.entrySet()) {
+            Float score = entry.getValue();
             if (this.orientation == PLOTTER_HORIZONTAL) {
                 //horizontal
-                rectangleShape = new Rectangle(0, i * (10 + 5), 100, 10);
+                rectangleShape = new Rectangle(0, i * (10 + 5), score, 10);
             } else {
                 //vertical
-                rectangleShape = new Rectangle(i * (10 + 5), 0, 10, 100);
+                rectangleShape = new Rectangle(i * (10 + 5), 0, 10, score);
             }
             Color color = ScorePlotter.DEFAULT_COLORS[i];
             FigureShapeType stroke = new FigureShapeType(rectangleShape, Color.white, FigureShapeType.GraphicsType.STROKE, 1);

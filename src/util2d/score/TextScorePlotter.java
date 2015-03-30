@@ -8,7 +8,7 @@ import util2d.graphics.FigureText;
  *
  * @author Barrionuevo Diego
  */
-public class TextScorePlotter extends ScorePlotter{
+public class TextScorePlotter {/*extends ScorePlotter{
 
     public TextScorePlotter(int countPlayers, Vector2f position) {
         super(countPlayers, position);
@@ -18,6 +18,6 @@ public class TextScorePlotter extends ScorePlotter{
     protected void createPlotter(int countPlayers) {
         Figure scoreTexts = new FigureText("0");
         setFigure(scoreTexts);
-    }
+    }*/
 
 }
