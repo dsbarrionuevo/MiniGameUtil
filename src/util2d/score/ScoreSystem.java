@@ -22,8 +22,10 @@ public abstract class ScoreSystem {
     public ScoreSystem(MiniGame miniGame) {
         this.miniGame = miniGame;
         this.resetScores();
-        this.plotter = new BarScorePlotter(scores, new Vector2f(10, 10));
+        this.plotter = new BarScorePlotter(100f, scores, new Vector2f(10, 10));
     }
+
+    public abstract boolean isFinished();
 
     public final void resetScores() {
         if (miniGame.getPlayers() != null) {
@@ -51,6 +53,8 @@ public abstract class ScoreSystem {
         this.plotter.updateScore(idPlayer, score);
     }
 
-    public abstract boolean isFinished();
+    public void setPlotter(ScorePlotter plotter) {
+        this.plotter = plotter;
+    }
 
 }

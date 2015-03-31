@@ -44,12 +44,12 @@ public abstract class MiniGame extends BasicGameState {
     public MiniGame(ApplicationController controller) throws SlickException {
         super();
         this.controller = controller;
+        this.players = controller.getPlayers();
         this.name = getName();
         this.instructions = getInstructions();
         this.scoreSystem = getScoreSystem();
         this.currentTime = 0;
         this.gameState = GameState.NOT_EVEN_STARTED;
-        this.players = controller.getPlayers();
         this.actionCommunication = controller.getCommunication();
         this.gameWindow = controller.getGameWindow();
     }

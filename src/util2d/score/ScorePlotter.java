@@ -14,6 +14,7 @@ import util2d.graphics.Drawable;
 public abstract class ScorePlotter extends Drawable {
 
     protected static Color[] DEFAULT_COLORS = new Color[]{Color.red, Color.green, Color.blue, Color.yellow};
+    //
     protected HashMap<String, Float> scores;
 
     public ScorePlotter(HashMap<String, Float> scores, Vector2f position) {
