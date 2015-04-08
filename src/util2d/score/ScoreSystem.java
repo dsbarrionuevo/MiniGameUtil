@@ -17,12 +17,21 @@ public abstract class ScoreSystem {
     protected HashMap<String, Float> scores;
     protected MiniGame miniGame;//ref to the miniGame
     protected ScorePlotter plotter;
+    //
     protected JDialog scoreChart;
 
-    public ScoreSystem(MiniGame miniGame) {
+    public ScoreSystem(MiniGame miniGame, ScorePlotter scorePlotter) {
         this.miniGame = miniGame;
+        this.scores = new HashMap<>();
         this.resetScores();
-        this.plotter = new BarScorePlotter(100f, scores, new Vector2f(10, 10));
+        this.plotter = scorePlotter;
+        if (this.plotter != null) {
+            this.plotter.setScores(this.scores);
+        }
+    }
+
+    public ScoreSystem(MiniGame miniGame) {
+        this(miniGame, null);
     }
 
     public abstract boolean isFinished();
@@ -32,29 +41,43 @@ public abstract class ScoreSystem {
             this.scores = new HashMap<>();
             for (Player player : miniGame.getPlayers()) {
                 this.scores.put(player.getId(), 0f);
-                this.plotter.updateScore(player.getId(), 0f);
+                if (this.plotter != null) {
+                    this.plotter.updateScore(player.getId(), 0f);
+                }
             }
         }
     }
 
     public void renderScorePlotter(GameContainer container, Graphics g) {
-        this.plotter.render(container, g);
+        if (this.plotter != null) {
+            this.plotter.render(container, g);
+        }
     }
 
     public void incrementScore(String idPlayer, float score) {
         float lastScore = this.scores.get(idPlayer);
-        this.scores.replace(idPlayer, lastScore + score);
-        this.plotter.updateScore(idPlayer, score);
+        float newScore = lastScore + score;
+        this.scores.replace(idPlayer, newScore);
+        if (this.plotter != null) {
+            this.plotter.updateScore(idPlayer, newScore);
+        }
     }
 
     public void decrementScore(String idPlayer, float score) {
         float lastScore = this.scores.get(idPlayer);
-        this.scores.replace(idPlayer, lastScore - score);
-        this.plotter.updateScore(idPlayer, score);
+        float newScore = lastScore - score;
+        this.scores.replace(idPlayer, newScore);
+        if (this.plotter != null) {
+            this.plotter.updateScore(idPlayer, newScore);
+        }
     }
 
     public void setPlotter(ScorePlotter plotter) {
         this.plotter = plotter;
+    }
+
+    public HashMap<String, Float> getScores() {
+        return scores;
     }
 
 }

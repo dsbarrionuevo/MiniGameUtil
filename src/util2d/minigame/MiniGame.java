@@ -20,6 +20,9 @@ import javax.swing.JFrame;
  */
 public abstract class MiniGame extends BasicGameState {
 
+    /**
+     * Estados en los puede estar un minijuego.
+     */
     public static enum GameState {
 
         NOT_EVEN_STARTED,
@@ -32,12 +35,13 @@ public abstract class MiniGame extends BasicGameState {
     protected int id;
     protected String name;
     protected GameState gameState;
+    protected GameContainer gameContainer;
+    protected ScoreSystem scoreSystem;
+    protected long currentTime;
+    protected JDialog instructions;
+    //
     protected ApplicationController controller;
     protected ArrayList<Player> players;
-    protected JDialog instructions;
-    protected GameContainer gameContainer;
-    protected ScoreSystem scoreSystem; //this one decides when the game is over (score reached, time limit, etc.)
-    protected long currentTime;
     protected ActionCommunication actionCommunication;
     protected JFrame gameWindow;
 
@@ -119,6 +123,7 @@ public abstract class MiniGame extends BasicGameState {
                 renderInstructions(container, game, g);
                 break;
             case RUNNING:
+                this.scoreSystem.renderScorePlotter(container, g);
                 renderRunning(container, game, g);
                 break;
             case SCORE_SCREEN:

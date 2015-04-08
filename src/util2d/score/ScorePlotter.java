@@ -15,6 +15,7 @@ public abstract class ScorePlotter extends Drawable {
 
     protected static Color[] DEFAULT_COLORS = new Color[]{Color.red, Color.green, Color.blue, Color.yellow};
     //
+    protected Color[] colors;
     protected HashMap<String, Float> scores;
 
     public ScorePlotter(HashMap<String, Float> scores, Vector2f position) {
@@ -23,18 +24,29 @@ public abstract class ScorePlotter extends Drawable {
         this.createPlotter();
     }
 
+    public ScorePlotter(HashMap<String, Float> scores) {
+        this(scores, new Vector2f());
+    }
+
     public abstract void updateScores();
 
-    protected void createPlotter() {
+    private void createPlotter() {
         this.updateScores();
     }
 
     protected void updateScore(String idPlayer, float score) {
-        this.scores.replace(idPlayer, score);
+        if (this.scores.containsKey(idPlayer)) {
+            this.scores.replace(idPlayer, score);
+        }
     }
 
     @Override
     public void render(GameContainer gc, Graphics g) {
         super.render(gc, g);
     }
+
+    public void setScores(HashMap<String, Float> scores) {
+        this.scores = scores;
+    }
+
 }
