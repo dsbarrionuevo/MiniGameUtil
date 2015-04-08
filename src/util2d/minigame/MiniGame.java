@@ -13,6 +13,9 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 import common.Player;
 import javax.swing.JFrame;
+import util2d.instructions.AbstractInstructionsUI;
+import util2d.instructions.Instructions;
+import util2d.instructions.InstructionsUI;
 
 /**
  *
@@ -38,7 +41,7 @@ public abstract class MiniGame extends BasicGameState {
     protected GameContainer gameContainer;
     protected ScoreSystem scoreSystem;
     protected long currentTime;
-    protected JDialog instructions;
+    protected Instructions instructions;
     //
     protected ApplicationController controller;
     protected ArrayList<Player> players;
@@ -50,7 +53,9 @@ public abstract class MiniGame extends BasicGameState {
         this.controller = controller;
         this.players = controller.getPlayers();
         this.name = getName();
-        this.instructions = getInstructions();
+        AbstractInstructionsUI instructionsUI = getInstructions();
+        this.instructions = new Instructions(this, instructionsUI);
+        instructionsUI.setInstruction(this.instructions);
         this.scoreSystem = getScoreSystem();
         this.currentTime = 0;
         this.gameState = GameState.NOT_EVEN_STARTED;
@@ -175,7 +180,7 @@ public abstract class MiniGame extends BasicGameState {
         return players;
     }
 
-    public abstract JDialog getInstructions();
+    public abstract AbstractInstructionsUI getInstructions();
 
     public GameContainer getGameContainer() {
         return gameContainer;
